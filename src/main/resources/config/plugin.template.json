@@ -1,0 +1,120 @@
+{
+  "agents": [
+    {
+      "name": "",
+      "host": "",
+      "port": 389,
+      "binddn": "",
+      "bindpw": "",
+      "timeout": 10000,
+      "timedops": {
+        "search": {
+          "base": "cn=monitor",
+          "scope": "base",
+          "filter": "(objectClass=*)"
+        },
+        "modify": {
+          "dn": "",
+          "attribute": "internationalisdnnumber"
+        }
+      },
+      "ldap": {
+        "counters": {
+          "anonymousbinds": "Binds/Anonymous;binds",
+          "simpleauthbinds": "Binds/Simple;binds",
+          "strongauthbinds": "Binds/Strong;binds",
+          "inops": "Requests/Total;requests",
+          "compareops": "Requests/Compare;requests",
+          "addentryops": "Requests/Add;requests",
+          "removeentryops": "Requests/Delete;requests",
+          "modifyentryops": "Requests/Modify;requests",
+          "modifyrdnops": "Requests/modrdn;requests",
+          "searchops": "Requests/Search;requests",
+          "onelevelsearchops": "Requests/Search/OneLevel;requests",
+          "wholesubtreesearchops": "Requests/Search/Subtree;requests",
+          "referrals": "Referrals/Sent;referrals",
+          "securityerrors": "Errors/Security;errors",
+          "errors": "Errors/General;errors",
+          "bindsecurityerrors": "Errors/Binds;errors",
+          "connectionseq": "Connections/Total;connections",
+          "bytesrecv": "Bytes/Received;bytes",
+          "bytessent": "Bytes/Sent;bytes",
+          "entriesreturned": "Entries/Sent;entries"
+        },
+        "gauges": {
+          "connections": "Connections/Current;connections",
+          "readwaiters": "Read Waiters/Current;waiters"
+        }
+      },
+      "ldbm": {
+        "counters": {
+          "nsslapd-db-abort-rate": "Transactions/Aborted;txns",
+          "nsslapd-db-cache-hit": "Cache/Hits;items",
+          "nsslapd-db-cache-try": "Cache/Tries;items",
+          "nsslapd-db-cache-region-wait-rate": "Cache/RegionWait;waits",
+          "nsslapd-db-commit-rate": "Transactions/Committed;txns",
+          "nsslapd-db-deadlock-rate": "Locks/Deadlocks;deadlocks",
+          "nsslapd-db-hash-elements-examine-rate": "Hash/Examined;hashes",
+          "nsslapd-db-hash-search-rate": "Hash/Lookups;hashes",
+          "nsslapd-db-lock-conflicts": "Locks/Conflicts;conflicts",
+          "nsslapd-db-lock-region-wait-rate": "Locks/RegionWait;waits",
+          "nsslapd-db-lock-request-rate": "Locks/Requested;locks",
+          "nsslapd-db-log-region-wait-rate": "Log/RegionWait;waits",
+          "nsslapd-db-log-write-rate": "Log/Written;bytes",
+          "nsslapd-db-page-create-rate": "Pages/Create;pages",
+          "nsslapd-db-page-read-rate": "Pages/Read;pages",
+          "nsslapd-db-page-ro-evict-rate": "Pages/Evict/Clean;pages",
+          "nsslapd-db-page-rw-evict-rate": "Pages/Evict/Dirty;pages",
+          "nsslapd-db-page-trickle-rate": "Pages/Trickle;pages",
+          "nsslapd-db-page-write-rate": "Pages/Write;pages",
+          "nsslapd-db-txn-region-wait-rate": "Transactions/RegionWait;waits"
+        },
+        "gauges": {
+          "nsslapd-db-active-txns": "Transactions/Active;txns",
+          "nsslapd-db-cache-size-bytes": "Cache/CurrentSize;bytes",
+          "nsslapd-db-clean-pages": "Pages/Clean;pages",
+          "nsslapd-db-dirty-pages": "Pages/Dirty;pages",
+          "nsslapd-db-hash-buckets": "Hash/Buckets;buckets",
+          "nsslapd-db-longest-chain-length": "Hash/LongestChain;length",
+          "nsslapd-db-lockers": "Locks/Lockers;lockers",
+          "nsslapd-db-current-locks": "Locks/Current;locks",
+          "nsslapd-db-max-locks": "Locks/Max;locks",
+          "nsslapd-db-current-lock-objects": "Locks/Objects/Current;objects",
+          "nsslapd-db-max-lock-objects": "Locks/Objects/Max;objects",
+          "nsslapd-db-log-bytes-since-checkpoint": "Log/SinceCheckpoint;bytes",
+          "nsslapd-db-pages-in-use": "Pages/InUse;pages"
+        }
+      },
+      "backendmonitor": {
+        "counters": {
+          "entrycachehits": "Entry Cache/Hits;items",
+          "entrycachetries": "Entry Cache/Tries;items",
+          "dncachehits": "DN Cache/Hits;items",
+          "dncachetries": "DN Cache/Tries;items",
+          "normalizeddncachetries": "Normalized DN Cache/Tries;items",
+          "normalizeddncachehits": "Normalized DN Cache/Hits;items",
+          "normalizeddncachemisses": "Normalized DN Cache/Misses;items",
+          "normalizeddncacheevictions": "Normalized DN Cache/Evictions;items",
+          "dbfilecachehit": "DB Cache/%s/Hits;items",
+          "dbfilecachemiss": "DB Cache/%s/Misses;items",
+          "dbfilepagein": "DB Cache/%s/PageIn;pages",
+          "dbfilepageout": "DB Cache/%s/PageOut;pages"
+        },
+        "gauges": {
+          "entrycachehitratio": "Entry Cache/HitRatio;num",
+          "currentnormalizeddncachesize": "Normalized DN Cache/CurrentSize;bytes",
+          "maxnormalizeddncachesize": "Normalized DN Cache/MaxSize;bytes",
+          "currentnormalizeddncachecount": "Normalized DN Cache/CurrentCount;num",
+          "normalizeddncachehitratio": "Normalized DN Cache/HitRatio;num",
+          "maxdncachesize": "DN Cache/MaxSize;bytes",
+          "currentdncachecount": "DN Cache/CurrentCount;num",
+          "currentdncachesize": "DN Cache/CurrentSize;bytes",
+          "dncachehitratio": "DN Cache/HitRatio;num",
+          "currententrycachesize": "Entry Cache/CurrentSize;bytes",
+          "maxentrycachesize": "Entry Cache/MaxSize;bytes",
+          "currententrycachecount": "Entry Cache/CurrentCount;num"
+        }
+      }
+    }
+  ]
+}
