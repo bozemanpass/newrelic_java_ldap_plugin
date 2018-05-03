@@ -65,6 +65,8 @@ public class LdapAgent extends Agent {
     private final String binddn;
     private final String bindpw;
     private final boolean anonymousBind;
+    private final boolean trustAnySSL;
+    private final boolean useSSL;
     private final int timeout;
     private final Map<String, Object> config;
     private final Map<String, LdapMetric> ldapCounters;
@@ -109,6 +111,12 @@ public class LdapAgent extends Agent {
 
             i = (Long) config.get("timeout");
             timeout = null != i ? i.intValue() : DEFAULT_TIMEOUT;
+
+            Boolean b = (Boolean) config.get("trust_any_ssl");
+            trustAnySSL = null != b ? b : false;
+
+            b = (Boolean) config.get("use_ssl");
+            useSSL = null != b ? b : 636 == this.port;
 
             JSONObject jo = (JSONObject) config.get("ldap");
             this.ldapCounters = Collections.unmodifiableMap(parseMetricSpecs((Map<String, String>) jo.get("counters")));
@@ -410,9 +418,15 @@ public class LdapAgent extends Agent {
             env.put(Context.SECURITY_CREDENTIALS, bindpw);
         }
 
+
         StringBuilder url = new StringBuilder();
-        if (636 == this.port) {
+        if (useSSL) {
             url.append("ldaps://");
+            env.put(Context.SECURITY_PROTOCOL, "ssl");
+            if (trustAnySSL) {
+                env.put("java.naming.ldap.factory.socket",
+                        "com.bozemanpass.newrelic.ldap.util.DummySSLSocketFactory");
+            }
         } else {
             url.append("ldap://");
         }
