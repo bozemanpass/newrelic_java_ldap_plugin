@@ -25,10 +25,18 @@ By default, the plugin will try to connect to `localhost` on port `389` anonymou
 To configure the connection information, including bind credentials, edit `config/plugin.json`.  For example:
 
       "host": "myldap.mydomain.local",
-      "port": 636,
+      "port": 389,
+      "use_ssl": false,
       "binddn": "cn=newrelic,ou=monitoring,dc=mydomain,dc=local",
       "bindpw": "mypassword",
-      
+
+If using SSL with a self-signed certificate, set both `use_ssl` and `trust_any_ssl` to `true`:
+
+      "host": "myldap.mydomain.local",
+      "port": 636,
+      "use_ssl": true,
+      "trust_any_ssl": true,
+ 
 The `timedops/modify` metric, which reports the time in milliseconds to do a sample modification, will only be attempted if the DN of the entry to modify is specified.  For example (using the same account for a self-modify):
 
         "modify": {

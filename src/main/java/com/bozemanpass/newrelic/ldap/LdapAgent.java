@@ -44,7 +44,7 @@ public class LdapAgent extends Agent {
     private static final int DEFAULT_TIMEOUT = 10000;
 
     private static final String GUID = "com.bozemanpass.newrelic.ldap";
-    private static final String VERSION = "1.0.2";
+    private static final String VERSION = "1.0.3";
 
     private static final String MONITOR_DN = "cn=monitor";
     private static final String SNMP_DN = "cn=snmp,cn=monitor";
