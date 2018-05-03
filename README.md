@@ -1,6 +1,8 @@
 # Description
 
-This plugin tracks metrics for [389 Directory Server](http://directory.fedoraproject.org/).  A wide range of metrics can be reported, such as the number of searches, adds, and modifications, current connections, database statistics, and the time to perform sample operations.
+This plugin provides metrics for 389 Directory Server (http://directory.fedoraproject.org/).  A wide range of metrics are provided for LDAP basic operations (search, add, modify, delete, etc.), connections, and binds, as well as database and backend statistics.  The response time to perform sample search and modify operations can also be tracked.
+
+For additional documentation see the GitHub project page: https://github.com/bozemanpass/newrelic_java_ldap_plugin 
 
 ----
 
@@ -22,6 +24,7 @@ If installing manually, configure your license key in the `config/newrelic.json`
     }
 
 By default, the plugin will try to connect to `localhost` on port `389` anonymously.  This can provide basic information like the number of searches, adds, etc.; however, most of the database and backend metrics are only available when doing an authenticated bind.  
+
 To configure the connection information, including bind credentials, edit `config/plugin.json`.  For example:
 
       "host": "myldap.mydomain.local",
