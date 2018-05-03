@@ -8,20 +8,13 @@ For additional documentation see the GitHub project page: https://github.com/boz
 
 # Installation
 
-To install using NPI (recommended) run:
+To install using NPI (recommended) simply run:
 
     npi install com.bozemanpass.newrelic.ldap
+    
+See the [New Relic NPI](https://docs.newrelic.com/docs/plugins/plugins-new-relic/installing-plugins/installing-npi-compatible-plugin) documentation for further information about using NPI or the [New Relic plugin documentation](https://docs.newrelic.com/docs/plugins/plugins-new-relic/installing-plugins/installing-plugin) if installing manually.
 
-See the [New Relic NPI](https://docs.newrelic.com/docs/plugins/plugins-new-relic/installing-plugins/installing-npi-compatible-plugin) documentation for further information about using NPI.
-
-If installing manually, configure your license key in the `config/newrelic.json` configuration file.
-
-    {
-      "license_key": "YOUR_LICENSE_KEY_HERE",
-      "log_level": "info",
-      "log_file_name": "newrelic_java_ldap_plugin.log",
-      "log_file_path": "logs"
-    }
+# Configuration
 
 By default, the plugin will try to connect to `localhost` on port `389` anonymously.  This can provide basic information like the number of searches, adds, etc.; however, most of the database and backend metrics are only available when doing an authenticated bind.  
 
