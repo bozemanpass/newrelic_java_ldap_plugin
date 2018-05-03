@@ -1,6 +1,6 @@
 # Description
 
-This plugin provides metrics for 389 Directory Server (http://directory.fedoraproject.org/).  A wide range of metrics are provided for LDAP basic operations (search, add, modify, delete, etc.), connections, and binds, as well as database and backend statistics.  The response time to perform sample search and modify operations can also be tracked.
+This plugin provides metrics for 389 Directory Server (http://www.port389.org).  A wide range of metrics are provided for LDAP basic operations (search, add, modify, delete, etc.), connections, and binds, as well as database and backend statistics.  The response time to perform sample search and modify operations can also be tracked.
 
 For additional documentation see the GitHub project page: https://github.com/bozemanpass/newrelic_java_ldap_plugin 
 
