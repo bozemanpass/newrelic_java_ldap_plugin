@@ -2,6 +2,8 @@
 
 This plugin provides metrics for 389 Directory Server (http://www.port389.org).  A wide range of metrics are provided for LDAP basic operations (search, add, modify, delete, etc.), connections, and binds, as well as database and backend statistics.  The response time to perform sample search and modify operations can also be tracked.
 
+![Screenshot][screenshot]
+
 For additional documentation see the GitHub project page: https://github.com/bozemanpass/newrelic_java_ldap_plugin 
 
 ----
@@ -14,9 +16,11 @@ To install using NPI (recommended) simply run:
     
 See the [New Relic NPI](https://docs.newrelic.com/docs/plugins/plugins-new-relic/installing-plugins/installing-npi-compatible-plugin) documentation for further information about using NPI or the [New Relic plugin documentation](https://docs.newrelic.com/docs/plugins/plugins-new-relic/installing-plugins/installing-plugin) if installing manually.
 
-# Configuration
+# Plugin Configuration
 
 By default, the plugin will try to connect to `localhost` on port `389` anonymously.  This can provide basic information like the number of searches, adds, etc.; however, most of the database and backend metrics are only available when doing an authenticated bind.  
+
+It is important never to use `cn=Directory Manager`.  You should use a non-privileged account with read-only access to the monitoring entries (see Server Configuration).
 
 To configure the connection information, including bind credentials, edit `config/plugin.json`.  For example:
 
@@ -39,8 +43,35 @@ The `timedops/modify` metric, which reports the time in milliseconds to do a sam
           "dn": "cn=newrelic,ou=monitoring,dc=mydomain,dc=local",
           "attribute": "internationalisdnnumber"
         }
+        
+----
 
----
+# Server Configuration
+
+You should never use a privileged account for monitoring.  It is customary to assign the required privileges to a group, and then add a user account to the indicated group.  The following example ACIs would enable read access (replace <MY_GROUP_DN> with the DN of your monitoring group):
+
+    dn: cn=monitor
+    changetype: modify
+    add: aci
+    aci: (target ="ldap:///cn=monitor*")
+     (targetattr != "aci")(version 3.0; acl "Allow read access to Monitoring users"; 
+     allow( read, search, compare ) groupdn="ldap:///<MY_GROUP_DN_GOES_HERE>";)
+    
+    dn: cn=config
+    changetype: modify
+    add: aci
+    aci: (target ="ldap:///cn=monitor,cn=*,cn=ldbm database,cn=plugins,cn=config")
+     (targetattr != "aci")(version 3.0; acl "Allow read access to Monitoring users"; 
+     allow( read, search, compare ) groupdn="ldap:///<MY_GROUP_DN_GOES_HERE>"";)
+    
+    dn: cn=monitor,cn=ldbm database,cn=plugins,cn=config
+    changetype: modify
+    add: aci
+    aci: (target ="ldap:///cn=*")
+     (targetattr != "aci")(version 3.0; acl "Allow read access to Monitoring users"; 
+     allow( read, search, compare ) groupdn="ldap:///<MY_GROUP_DN_GOES_HERE>"";)
+
+----
 
 # The Metrics
 
@@ -72,6 +103,35 @@ LDAP Metrics:
 | Requests/Search/OneLevel | Counter | The number of one-level search operations serviced by this directory since server startup. |
 | Requests/Search/Subtree | Counter | The number of whole subtree search operations serviced by this directory since server startup. |
 | Requests/Total | Counter | The total number of all requests received by the server since startup. |
+
+Backend Instance Metrics:
+
+| Metric | Type | Description |
+| :--- | :--- | :--- |
+| DB Cache/FILENAME/Hits | Counter | The number of times the database cache successfully supplied a requested page. |
+| DB Cache/FILENAME/Misses | Counter | The number of times that a search result failed to hit the cache on this specific file. That is, a search that required data from this file was performed, and the required data could not be found in the cache. |
+| DB Cache/FILENAME/PageIn | Counter | The number of pages brought to the cache from this file. |
+| DB Cache/FILENAME/PageOut | Counter | The number of pages for this file written from cache to disk. | 
+| DN Cache/CurrentCount | Gauge | The current number of items in the DN cache. |
+| DN Cache/CurrentSize | Gauge | The current size in bytes of the DN cache. |
+| DN Cache/HitRatio | Gauge | The ratio of hits to tries of the DN cache. |
+| DN Cache/Hits | Counter | The total number of successful DN cache lookups. |
+| DN Cache/MaxSize | Gauge | The maximum size in bytes of the DN cache. |
+| DN Cache/Tries | Counter | The total number of DN cache lookups since the directory was last started. |
+| Entry Cache/CurrentCount | Gauge | The number of directory entries currently present in the entry cache. |
+| Entry Cache/CurrentSize | Gauge | The total size in bytes of directory entries currently present in the entry cache. |
+| Entry Cache/HitRatio | Gauge | The ratio of database cache hits to database cache tries. The closer this value is to 100%, the better. |
+| Entry Cache/Hits | Counter | The total number of successful entry cache lookups. That is, the total number of times the server could process a search request by obtaining data from the cache rather than by going to disk. |
+| Entry Cache/MaxSize | Gauge | The maximum size of the entry cache maintained by the directory. |
+| Entry Cache/Tries | Counter | The total number of entry cache lookups since the directory was last started. That is, the total number of entries requested since server startup. |
+| Normalized DN Cache/CurrentCount | Gauge | The current number of items in the normalized DN cache. |
+| Normalized DN Cache/CurrentSize | Gauge | The current size in bytes of the normalized DN cache. |
+| Normalized DN Cache/Evictions | Counter | The number of items evicted from the normalized DN cache since server startup. |
+| Normalized DN Cache/HitRatio | Gauge | The ratio of hits to tries for the normalized DN cache. |
+| Normalized DN Cache/Hits | Counter | The total number of successful normalized DN cache lookups. |
+| Normalized DN Cache/MaxSize | Gauge | The maximum size in bytes of the normalized DN cache. |
+| Normalized DN Cache/Misses | Counter | The total number of unsuccessful normalized DN cache lookups. |
+| Normalized DN Cache/Tries | Counter | The total number of normalized DN cache lookups. |
 
 LDBM Metrics:
 
@@ -111,38 +171,10 @@ LDBM Metrics:
 | Transactions/Committed | Counter | The number of transactions that have been committed. |
 | Transactions/RegionWait | Counter | The number of times that a thread of control was forced to wait before obtaining the region lock. |
 
-Backend Instance Metrics:
-
-| Metric | Type | Description |
-| :--- | :--- | :--- |
-| DB Cache/FILENAME/Hits | Counter | The number of times the database cache successfully supplied a requested page. |
-| DB Cache/FILENAME/Misses | Counter | The number of times that a search result failed to hit the cache on this specific file. That is, a search that required data from this file was performed, and the required data could not be found in the cache. |
-| DB Cache/FILENAME/PageIn | Counter | The number of pages brought to the cache from this file. |
-| DB Cache/FILENAME/PageOut | Counter | The number of pages for this file written from cache to disk. | 
-| DN Cache/CurrentCount | Gauge | The current number of items in the DN cache. |
-| DN Cache/CurrentSize | Gauge | The current size in bytes of the DN cache. |
-| DN Cache/HitRatio | Gauge | The ratio of hits to tries of the DN cache. |
-| DN Cache/Hits | Counter | The total number of successful DN cache lookups. |
-| DN Cache/MaxSize | Gauge | The maximum size in bytes of the DN cache. |
-| DN Cache/Tries | Counter | The total number of DN cache lookups since the directory was last started. |
-| Entry Cache/CurrentCount | Gauge | The number of directory entries currently present in the entry cache. |
-| Entry Cache/CurrentSize | Gauge | The total size in bytes of directory entries currently present in the entry cache. |
-| Entry Cache/HitRatio | Gauge | The ratio of database cache hits to database cache tries. The closer this value is to 100%, the better. |
-| Entry Cache/Hits | Counter | The total number of successful entry cache lookups. That is, the total number of times the server could process a search request by obtaining data from the cache rather than by going to disk. |
-| Entry Cache/MaxSize | Gauge | The maximum size of the entry cache maintained by the directory. |
-| Entry Cache/Tries | Counter | The total number of entry cache lookups since the directory was last started. That is, the total number of entries requested since server startup. |
-| Normalized DN Cache/CurrentCount | Gauge | The current number of items in the normalized DN cache. |
-| Normalized DN Cache/CurrentSize | Gauge | The current size in bytes of the normalized DN cache. |
-| Normalized DN Cache/Evictions | Counter | The number of items evicted from the normalized DN cache since server startup. |
-| Normalized DN Cache/HitRatio | Gauge | The ratio of hits to tries for the normalized DN cache. |
-| Normalized DN Cache/Hits | Counter | The total number of successful normalized DN cache lookups. |
-| Normalized DN Cache/MaxSize | Gauge | The maximum size in bytes of the normalized DN cache. |
-| Normalized DN Cache/Misses | Counter | The total number of unsuccessful normalized DN cache lookups. |
-| Normalized DN Cache/Tries | Counter | The total number of normalized DN cache lookups. |
-
 Timed Operation Metrics:
+
 | Metric | Description |
-| :--- | :--- | :--- |
+| :--- | :--- |
 | TimedOps/Modify | The time in milliseconds to perform the modification. |
 | TimedOps/Search | The time in milliseconds to perform the search. |
 
@@ -197,3 +229,5 @@ SOFTWARE.
 Contact [Bozeman Pass, Inc.](https://www.bozemanpass.com/contact-us/) with questions.
 
 ----
+
+[screenshot]: https://raw.githubusercontent.com/bozemanpass/newrelic_java_ldap_plugin/master/screenshot.png "Screenshot"
